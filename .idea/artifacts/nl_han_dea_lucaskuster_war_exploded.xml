@@ -1,0 +1,39 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="nl.han.dea.lucaskuster:war exploded">
+    <output-path>$PROJECT_DIR$/target/nl.han.dea.lucaskuster-1.0-SNAPSHOT</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>nl.han.dea.lucaskuster</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="nl.han.dea.lucaskuster" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.airhacks:jaxrs-cors:0.0.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.jersey.inject:jersey-hk2:2.29.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.jersey.core:jersey-common:2.29.1" />
+          <element id="library" level="project" name="Maven: jakarta.ws.rs:jakarta.ws.rs-api:2.1.6" />
+          <element id="library" level="project" name="Maven: jakarta.annotation:jakarta.annotation-api:1.3.5" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2.external:jakarta.inject:2.6.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2:osgi-resource-locator:1.0.3" />
+          <element id="library" level="project" name="Maven: com.sun.activation:jakarta.activation:1.2.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2:hk2-locator:2.6.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2.external:aopalliance-repackaged:2.6.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2:hk2-api:2.6.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.hk2:hk2-utils:2.6.1" />
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.22.0-CR2" />
+          <element id="library" level="project" name="Maven: com.googlecode.json-simple:json-simple:1.1" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/nl.han.dea.lucaskuster-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="nl.han.dea.lucaskuster/web/Web" />
+    </root>
+  </artifact>
+</component>
