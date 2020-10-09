@@ -3,6 +3,7 @@ package Spotitube.controllers.database;
 import Spotitube.controllers.dto.TrackDTO;
 import Spotitube.controllers.dto.TracksDTO;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -11,6 +12,13 @@ public class TracksDAO {
 
     private TracksDTO tracksDTO;
     private TracksDTO heavyMetalTracksDTO;
+
+    private  SpotitubeDBConnection connection;
+
+    @Inject
+    public void setSpotitubeDBConnection(SpotitubeDBConnection connection) {
+        this.connection = connection;
+    }
 
     public TracksDAO() {
 

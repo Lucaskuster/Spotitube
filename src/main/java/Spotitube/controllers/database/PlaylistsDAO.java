@@ -5,6 +5,7 @@ import Spotitube.controllers.dto.PlaylistsDTO;
 import Spotitube.controllers.dto.TrackDTO;
 import Spotitube.controllers.dto.TracksDTO;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -15,6 +16,13 @@ public class PlaylistsDAO {
     private TracksDTO leeg;
     private TracksDTO tracks;
     private TracksDTO heavymetaltracks;
+
+    private  SpotitubeDBConnection connection;
+
+    @Inject
+    public void setSpotitubeDBConnection(SpotitubeDBConnection connection) {
+        this.connection = connection;
+    }
 
     public PlaylistsDAO() {
         TracksDAO tracks = new TracksDAO();
