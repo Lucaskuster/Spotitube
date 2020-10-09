@@ -8,7 +8,7 @@ public class SpotitubeDBConnection {
 
     private String connectionUrl = "jdbc:sqlserver://localhost;database=Spotitube;integratedSecurity=true;";
 
-    public SpotitubeDBConnection(){
+    public SpotitubeDBConnection() {
     }
 
     public Connection createConnection() {
@@ -27,23 +27,4 @@ public class SpotitubeDBConnection {
 
         return cnEmps;
     }
-
-//    public static void main(String[] args) {
-//
-//
-//
-//        try {
-//            var select = connection.prepareStatement("select * from login");
-//            ResultSet resultSet = select.executeQuery();
-//
-//            while (resultSet.next()) {
-//                System.out.println(resultSet.getString("username"));
-//            }
-//
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//
-//    }
 }
-

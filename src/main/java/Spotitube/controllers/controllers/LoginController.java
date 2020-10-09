@@ -25,6 +25,7 @@ public class LoginController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginRequestDTO loginRequestDTO){
         var result = loginDAO.loginDAO(loginRequestDTO);
+        // Hoe vang ik een andere status code af?
         return Response.ok(result.getEntity()).build();
     }
 }
