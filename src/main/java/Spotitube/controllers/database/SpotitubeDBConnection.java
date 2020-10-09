@@ -5,14 +5,10 @@ import java.sql.*;
 
 @Singleton
 public class SpotitubeDBConnection {
-    SpotitubeDBConnection dbConnection;
-    Connection connection;
 
     private String connectionUrl = "jdbc:sqlserver://localhost;database=Spotitube;integratedSecurity=true;";
 
     public SpotitubeDBConnection(){
-        this.dbConnection = new SpotitubeDBConnection();
-        this.connection = dbConnection.createConnection();
     }
 
     public Connection createConnection() {
@@ -30,11 +26,6 @@ public class SpotitubeDBConnection {
         }
 
         return cnEmps;
-
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
 //    public static void main(String[] args) {

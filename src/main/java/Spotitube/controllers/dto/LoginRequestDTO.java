@@ -1,8 +1,8 @@
 package Spotitube.controllers.dto;
 
 public class LoginRequestDTO {
-    private String user = "Lucas";
-    private String password = "Lucas";
+    private String user;
+    private String password;
 
     public String getUser() {
         return user;

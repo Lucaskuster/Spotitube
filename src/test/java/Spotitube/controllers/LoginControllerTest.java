@@ -6,11 +6,18 @@ import Spotitube.controllers.dto.LoginResponseDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoginControllerTest {
+    private LoginController loginController;
+
+    @Inject
+    public void setPlaylistsDAO(LoginController loginController) {
+        this.loginController = loginController;
+    }
 
     @Test
     void loginTypeTest() {
@@ -19,7 +26,7 @@ class LoginControllerTest {
         loginRequestDTO.setUser("Lucas");
         loginRequestDTO.setPassword("Lucas");
         //act
-        Response response = LoginController.login(loginRequestDTO);
+        Response response = loginController.login(loginRequestDTO);
         Object entity = response.getEntity();
 
         //assert
@@ -34,7 +41,7 @@ class LoginControllerTest {
         loginRequestDTO.setPassword("Lucas");
 
         //act
-        Response response = LoginController.login(loginRequestDTO);
+        Response response = loginController.login(loginRequestDTO);
         LoginResponseDTO loginResponse = (LoginResponseDTO) response.getEntity();
 
         //assert
@@ -49,7 +56,7 @@ class LoginControllerTest {
         loginRequestDTO.setPassword("Test");
 
         //act
-        Response response = LoginController.login(loginRequestDTO);
+        Response response = loginController.login(loginRequestDTO);
 
         //assert
         assertEquals(response.getStatus(), 401);
@@ -63,7 +70,7 @@ class LoginControllerTest {
         loginRequestDTO.setPassword("Lucas");
 
         //act
-        Response response = LoginController.login(loginRequestDTO);
+        Response response = loginController.login(loginRequestDTO);
         LoginResponseDTO loginResponse = (LoginResponseDTO) response.getEntity();
 
         //assert
@@ -78,7 +85,7 @@ class LoginControllerTest {
         loginRequestDTO.setPassword("Lucas");
 
         //act
-        Response responseLogin = LoginController.login(loginRequestDTO);
+        Response responseLogin = loginController.login(loginRequestDTO);
         LoginResponseDTO loginResponse = (LoginResponseDTO) responseLogin.getEntity();
 
         //assert
