@@ -1,22 +1,22 @@
 package Spotitube.controllers.database;
 
-import Spotitube.controllers.dto.PlaylistDTO;
-import Spotitube.controllers.dto.PlaylistsDTO;
-import Spotitube.controllers.dto.TrackDTO;
-import Spotitube.controllers.dto.TracksDTO;
+import Spotitube.controllers.dto.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
 public class PlaylistsDAO {
 
-    private PlaylistsDTO playlistsDTO;
     private TracksDTO leeg;
     private TracksDTO tracks;
     private TracksDTO heavymetaltracks;
+    private PlaylistsDTO playlistsDTO;
     private Connection connection;
 
     @Inject
@@ -28,80 +28,89 @@ public class PlaylistsDAO {
         TracksDAO tracks = new TracksDAO();
         this.tracks = tracks.getTracksDTO();
         this.heavymetaltracks = tracks.getHeavyMetalTracksDTO();
-
-        var playlist1 = new PlaylistDTO();
-        playlist1.setId(1);
-        playlist1.setName("Death metal");
-        playlist1.setOwner(true);
-        playlist1.setTracks(heavymetaltracks);
-        var playlist2 = new PlaylistDTO();
-        playlist2.setId(2);
-        playlist2.setName("Pop");
-        playlist2.setOwner(false);
-        playlist2.setTracks(leeg);
-        var playlists = new PlaylistsDTO();
-        List<PlaylistDTO> playlistArray = List.of(playlist1, playlist2);
-        playlists.setPlaylists(playlistArray);
-        playlists.setLength(123445);
-
-        this.playlistsDTO = playlists;
     }
 
-    public PlaylistsDTO delete(int id) {
-        var playlist1 = new PlaylistDTO();
-        playlist1.setId(2);
-        playlist1.setName("Pop");
-        playlist1.setOwner(false);
-        playlist1.setTracks(leeg);
+    public PlaylistsDTO getPlaylistsDTO(String token) {
+//        if(token.equals(login.getLoginToken())) {
+        PlaylistsDTO playlistsDTO = new PlaylistsDTO();
+        try {
+            var select = connection.prepareStatement
+                    ("SELECT id, name, owner, length FROM playlist");
 
-        java.util.List<PlaylistDTO> playlistArray = List.of(playlist1);
-        playlistsDTO.setPlaylists(playlistArray);
-        playlistsDTO.setLength(6445);
+            ResultSet resultSet = select.executeQuery();
+            int id;
+            String name = "";
+            Boolean owner;
+            int length = 0;
 
+            int i = 0;
+            List<PlaylistDTO> playlistArray = new ArrayList<PlaylistDTO>();
+            while (resultSet.next()) {
+                PlaylistDTO playlistDTO = new PlaylistDTO();
+                playlistDTO.setId(resultSet.getInt("id"));
+                playlistDTO.setName(resultSet.getString("name"));
+                playlistDTO.setOwner(resultSet.getBoolean("owner"));
+                playlistDTO.setTracks(null);
+
+                playlistArray.add(i, playlistDTO);
+                length += resultSet.getInt("length");
+                i++;
+            }
+            playlistsDTO.setPlaylists(playlistArray);
+            playlistsDTO.setLength(length);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return playlistsDTO;
-    }
 
-    public PlaylistsDTO add() {
-        var playlist3 = new PlaylistDTO();
-        playlist3.setId(3);
-        playlist3.setName("Progressive Rock");
-        playlist3.setOwner(false);
-        playlist3.setTracks(leeg);
-
-        java.util.List<PlaylistDTO> playlistArray = List.of(playlistsDTO.getPlaylists().get(0),
-                playlistsDTO.getPlaylists().get(1), playlist3);
-        playlistsDTO.setPlaylists(playlistArray);
-        playlistsDTO.setLength(123445);
-
-        return playlistsDTO;
+        //return null;//er moet een 401 komen
+        // Wat dan terug geven als er geen response kan?
     }
 
 
-    public PlaylistsDTO edit(int id) {
+    public PlaylistsDTO delete(String token, int id) {
+        try {
+            var delete = connection.prepareStatement
+                    ("DELETE FROM playlist WHERE id = ?");
+            delete.setInt(1, id);
+            delete.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return getPlaylistsDTO(token);
+    }
 
-        var playlist1 = new PlaylistDTO();
-        playlist1.setId(1);
-        playlist1.setName("Heavy metal");
-        playlist1.setOwner(true);
-        playlist1.setTracks(heavymetaltracks);
-        var playlist2 = new PlaylistDTO();
-        playlist2.setId(2);
-        playlist2.setName("Pop");
-        playlist2.setOwner(false);
-        playlist2.setTracks(leeg);
-        List<PlaylistDTO> playlistArray = List.of(playlist1, playlist2);
-        playlistsDTO.setPlaylists(playlistArray);
-        playlistsDTO.setLength(123445);
+    public PlaylistsDTO add(String token, PlaylistDTO playlistDTO) {
+        try {
+            var addStatement = connection.prepareStatement
+                    ("INSERT INTO playlist (id, name, owner) VALUES (?, ?, ?)");
+            addStatement.setInt(1, playlistDTO.getId());
+            addStatement.setString(2, playlistDTO.getName());
+            addStatement.setBoolean(3, playlistDTO.isOwner());
+            addStatement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return getPlaylistsDTO(token);
+    }
 
-        return playlistsDTO;
+    public PlaylistsDTO edit(String token, PlaylistDTO playlistDTO, int id) {
+        try {
+            var editStatement = connection.prepareStatement
+                    ("UPDATE playlist SET name = ? WHERE id = ?");
+            editStatement.setString(1, playlistDTO.getName());
+            editStatement.setInt(2, id);
+
+            editStatement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return getPlaylistsDTO(token);
     }
 
     public TracksDTO tracks(int id) {
-        var playlists = playlistsDTO.getPlaylists();
-        var playlist = playlists.get(0);
-        TracksDTO tracks;
-        tracks = playlist.getTracks();
-        return tracks;
+        return heavymetaltracks;
     }
 
     public TracksDTO deleteTrack(int idPlaylist, int idTrack) {
@@ -122,10 +131,6 @@ public class PlaylistsDAO {
         tracks.setTracks(tracksArray);
 
         return tracks;
-    }
-
-    public PlaylistsDTO getPlaylistsDTO() {
-        return playlistsDTO;
     }
 
     public TrackDTO addTrack() {

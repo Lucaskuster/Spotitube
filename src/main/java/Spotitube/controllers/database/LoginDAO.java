@@ -5,7 +5,6 @@ import Spotitube.controllers.dto.LoginResponseDTO;
 import Spotitube.controllers.services.LoginService;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +18,7 @@ public class LoginDAO {
         this.connection = connection.createConnection();
     }
 
-    public Response loginDAO(LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO loginDAO(LoginRequestDTO loginRequestDTO) {
         try {
             var select = connection.prepareStatement
                     ("SELECT username, password FROM login WHERE username = ? ");
@@ -48,14 +47,30 @@ public class LoginDAO {
                 var loginResponseDTO = new LoginResponseDTO();
                 loginResponseDTO.setUser(username);
                 loginResponseDTO.setToken(token);
-                return Response.ok(loginResponseDTO).build();
+                return loginResponseDTO;
             }
-            return Response.status(401).build();
+            return null;
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return Response.status(400).build();
+        return null;
         //welke status anders?
     }
+    
+//    public String getLoginToken(){
+//        return logintoken;
+//////        String token = null;
+//////        try {
+//////            var select = connection.prepareStatement
+//////                    ("SELECT token FROM login WHERE username = ? ");
+//////            select.setString(1, username);
+//////            ResultSet resultSet = select.executeQuery();
+//////
+//////            token = resultSet.getString("token");
+//////        } catch (SQLException throwables) {
+//////            throwables.printStackTrace();
+//////        }
+//////        return token;
+//    }
 }

@@ -2,6 +2,7 @@ package Spotitube.controllers.controllers;
 
 import Spotitube.controllers.database.PlaylistsDAO;
 import Spotitube.controllers.dto.LoginResponseDTO;
+import Spotitube.controllers.dto.PlaylistDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -23,7 +24,7 @@ public class PlaylistsController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response playlists(@QueryParam("token") String token) {
         //if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.getPlaylistsDTO()).build();
+            return Response.ok(playlistsDAO.getPlaylistsDTO(token)).build();
        // }
        // return Response.status(403).build();
     }
@@ -33,16 +34,17 @@ public class PlaylistsController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePlaylist(@QueryParam("token") String token, @PathParam("id") int id) {
         //if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.delete(id)).build();
+            return Response.ok(playlistsDAO.delete(token, id)).build();
 //        }
 //        return Response.status(403).build();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addPlaylist(@QueryParam("token") String token) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addPlaylist(@QueryParam("token") String token, PlaylistDTO playlistDTO) {
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.add()).build();
+            return Response.ok(playlistsDAO.add(token, playlistDTO)).build();
 //        }
 //        return Response.status(403).build();
     }
@@ -50,9 +52,10 @@ public class PlaylistsController {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editPlaylist(@QueryParam("token") String token, @PathParam("id") int id) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response editPlaylist(@QueryParam("token") String token, PlaylistDTO playlistDTO, @PathParam("id") int id) {
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.edit(id)).build();
+            return Response.ok(playlistsDAO.edit(token, playlistDTO, id)).build();
 //        }
 //        return Response.status(403).build();
     }

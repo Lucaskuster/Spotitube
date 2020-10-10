@@ -26,6 +26,6 @@ public class LoginController {
     public Response login(LoginRequestDTO loginRequestDTO){
         var result = loginDAO.loginDAO(loginRequestDTO);
         // Hoe vang ik een andere status code af?
-        return Response.ok(result.getEntity()).build();
+        return Response.ok(result).build();
     }
 }
