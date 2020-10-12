@@ -112,7 +112,7 @@ public class PlaylistsDAO {
         return getPlaylistsDTO(token);
     }
 
-    public TracksDTO tracks(String token, int idPlaylist){
+    public TracksDTO tracks(String token, int idPlaylist) {
         TracksDTO tracksDTO = new TracksDTO();
         try {
             var select = connection.prepareStatement
@@ -171,60 +171,17 @@ public class PlaylistsDAO {
         return tracks(token, idPlaylist);
     }
 
-    public TrackDTO addTrack(String token, TrackDTO trackDTO) {
+    public TracksDTO addTrack(String token, TrackDTO trackDTO, int idPlaylist) {
+        try {
+            var addStatement = connection.prepareStatement
+                    ("INSERT INTO playlistTracks (idPlaylist, idTrack) VALUES (?, ?)");
+            addStatement.setInt(1, idPlaylist);
+            addStatement.setInt(2, trackDTO.getId());
+            addStatement.execute();
 
-//        try {
-//            var idStatement = connection.prepareStatement
-//                    ("SELECT MAX(id) id FROM track");
-//            ResultSet resultSet = idStatement.executeQuery();
-//            resultSet.next();
-//            int id = resultSet.getInt("id");
-//
-//            var addStatement = connection.prepareStatement
-//                    ("INSERT INTO playlist (id, name, owner) VALUES (?, ?, ?)");
-//            addStatement.setInt(1, id + 1);
-//            addStatement.setString(2, playlistDTO.getName());
-//            addStatement.setBoolean(3, true);
-//            addStatement.execute();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        return getPlaylistsDTO(token);
-        return trackDTO;
-
-//        TracksDTO tracksDTO = this.tracks(token, idPlaylist);
-//        var tracks = tracksDTO.getTracks();
-//        TrackDTO track = tracks.stream().filter(element -> element.equals(idTrack)).findFirst().get();
-//
-//        try {
-//            var select = connection.prepareStatement
-//                    ("DELETE track WHERE id = ?");
-//            select.setInt(1, track.getId());
-//            select.execute();
-//
-//            tracksDTO = this.tracks(token, idPlaylist);
-//
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        return tracksDTO;
-
-//        var track2 = new TrackDTO();
-//        track2.setId(4);
-//        track2.setTitle("So Long, Marianne");
-//        track2.setPerformer("Leonard Cohen");
-//        track2.setDuration(546);
-//        track2.setAlbum("Songs of Leonard Cohen");
-//        track2.setPlaycount(0);
-//        track2.setPublicationDate(null);
-//        track2.setDescription(null);
-//        track2.setOfflineAvailable(false);
-//
-//        java.util.List<TrackDTO> trackArray = List.of(playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(0),
-//                playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(1), track2);
-//        tracks.setTracks(trackArray);
-//        playlistsDTO.getPlaylists().get(0).setTracks(tracks);
-//
-//        return track2;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return tracks(token, idPlaylist);
     }
 }

@@ -86,9 +86,10 @@ public class PlaylistsController {
     @POST
     @Path("/{id}/tracks")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addTrackToPlaylist(@QueryParam("token") String token, TrackDTO trackDTO){
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addTrackToPlaylist(@QueryParam("token") String token, TrackDTO trackDTO, @PathParam("id") int id){
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.addTrack(token, trackDTO)).build();
+            return Response.ok(playlistsDAO.addTrack(token, trackDTO, id)).build();
 //        }
 //        return Response.status(403).build();
     }
