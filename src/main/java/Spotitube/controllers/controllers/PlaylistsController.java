@@ -3,6 +3,7 @@ package Spotitube.controllers.controllers;
 import Spotitube.controllers.database.PlaylistsDAO;
 import Spotitube.controllers.dto.LoginResponseDTO;
 import Spotitube.controllers.dto.PlaylistDTO;
+import Spotitube.controllers.dto.TrackDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -65,7 +66,7 @@ public class PlaylistsController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response tracksInPlaylist(@QueryParam("token") String token, @PathParam("id") int id) {
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.tracks(id)).build();
+            return Response.ok(playlistsDAO.tracks(token, id)).build();
 //        }
 //        return Response.status(403).build();
     }
@@ -73,9 +74,9 @@ public class PlaylistsController {
     @DELETE
     @Path("/{idP}/tracks/{idT}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteTrackInPlaylist(@QueryParam("token") String token, @QueryParam("idP") int idPlaylist, @QueryParam("idT") int idTrack){
+    public Response deleteTrackInPlaylist(@QueryParam("token") String token, @PathParam("idP") int idPlaylist, @PathParam("idT") int idTrack){
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.deleteTrack(idPlaylist, idTrack)).build();
+            return Response.ok(playlistsDAO.deleteTrack(token, idPlaylist, idTrack)).build();
 //        }
 //        return Response.status(403).build();
         //Let op!! doordat er maar 1 afspeellijst in staat, staat er bij pop dezelfde lijst. De response "leeg"
@@ -85,9 +86,9 @@ public class PlaylistsController {
     @POST
     @Path("/{id}/tracks")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addTrackToPlaylist(@QueryParam("token") String token){
+    public Response addTrackToPlaylist(@QueryParam("token") String token, TrackDTO trackDTO){
 //        if (token.equals(loginResponseDTO.getToken())) {
-            return Response.ok(playlistsDAO.addTrack()).build();
+            return Response.ok(playlistsDAO.addTrack(token, trackDTO)).build();
 //        }
 //        return Response.status(403).build();
     }

@@ -1,6 +1,9 @@
 package Spotitube.controllers.database;
 
-import Spotitube.controllers.dto.*;
+import Spotitube.controllers.dto.PlaylistDTO;
+import Spotitube.controllers.dto.PlaylistsDTO;
+import Spotitube.controllers.dto.TrackDTO;
+import Spotitube.controllers.dto.TracksDTO;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,9 +16,6 @@ import java.util.List;
 @Singleton
 public class PlaylistsDAO {
 
-    private TracksDTO leeg;
-    private TracksDTO tracks;
-    private TracksDTO heavymetaltracks;
     private PlaylistsDTO playlistsDTO;
     private Connection connection;
 
@@ -25,9 +25,6 @@ public class PlaylistsDAO {
     }
 
     public PlaylistsDAO() {
-        TracksDAO tracks = new TracksDAO();
-        this.tracks = tracks.getTracksDTO();
-        this.heavymetaltracks = tracks.getHeavyMetalTracksDTO();
     }
 
     public PlaylistsDTO getPlaylistsDTO(String token) {
@@ -83,11 +80,17 @@ public class PlaylistsDAO {
 
     public PlaylistsDTO add(String token, PlaylistDTO playlistDTO) {
         try {
+            var idStatement = connection.prepareStatement
+                    ("SELECT MAX(id) id FROM playlist");
+            ResultSet resultSet = idStatement.executeQuery();
+            resultSet.next();
+            int id = resultSet.getInt("id");
+
             var addStatement = connection.prepareStatement
                     ("INSERT INTO playlist (id, name, owner) VALUES (?, ?, ?)");
-            addStatement.setInt(1, playlistDTO.getId());
+            addStatement.setInt(1, id + 1);
             addStatement.setString(2, playlistDTO.getName());
-            addStatement.setBoolean(3, playlistDTO.isOwner());
+            addStatement.setBoolean(3, true);
             addStatement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -109,49 +112,119 @@ public class PlaylistsDAO {
         return getPlaylistsDTO(token);
     }
 
-    public TracksDTO tracks(int id) {
-        return heavymetaltracks;
+    public TracksDTO tracks(String token, int idPlaylist){
+        TracksDTO tracksDTO = new TracksDTO();
+        try {
+            var select = connection.prepareStatement
+                    ("SELECT T.* FROM track T INNER JOIN playlistTracks P ON T.id = P.idTrack WHERE P.idPlaylist = ?");
+            select.setInt(1, idPlaylist);
+
+            ResultSet resultSet = select.executeQuery();
+
+            int id;
+            String titel = "";
+            String performer = "";
+            int duration;
+            String album = "";
+            int playcount;
+            String publicationDate = "";
+            String description = "";
+            boolean offlineAvailable;
+
+            int i = 0;
+            List<TrackDTO> trackArray = new ArrayList<TrackDTO>();
+
+            while (resultSet.next()) {
+                TrackDTO trackDTO = new TrackDTO();
+                trackDTO.setId(resultSet.getInt("id"));
+                trackDTO.setTitle(resultSet.getString("titel"));
+                trackDTO.setPerformer(resultSet.getString("performer"));
+                trackDTO.setDuration(resultSet.getInt("duration"));
+                trackDTO.setAlbum(resultSet.getString("album"));
+                trackDTO.setPlaycount(resultSet.getInt("playcount"));
+                trackDTO.setPublicationDate(resultSet.getString("publicationDate"));
+                trackDTO.setDescription(resultSet.getString("description"));
+                trackDTO.setOfflineAvailable(resultSet.getBoolean("offlineAvailable"));
+
+                trackArray.add(i, trackDTO);
+                i++;
+            }
+            tracksDTO.setTracks(trackArray);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return tracksDTO;
     }
 
-    public TracksDTO deleteTrack(int idPlaylist, int idTrack) {
-        TracksDTO tracks = heavymetaltracks;
 
-        var track4 = new TrackDTO();
-        track4.setId(1);
-        track4.setTitle("Song for someone");
-        track4.setPerformer("The Frames");
-        track4.setDuration(350);
-        track4.setAlbum("The cost");
-        track4.setPlaycount(0);
-        track4.setPublicationDate(null);
-        track4.setDescription(null);
-        track4.setOfflineAvailable(false);
+    public TracksDTO deleteTrack(String token, int idPlaylist, int idTrack) {
+        try {
+            var delete = connection.prepareStatement
+                    ("DELETE FROM playlistTracks WHERE idTrack = ?");
+            delete.setInt(1, idTrack);
+            delete.execute();
 
-        List<TrackDTO> tracksArray = List.of(track4);
-        tracks.setTracks(tracksArray);
-
-        return tracks;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return tracks(token, idPlaylist);
     }
 
-    public TrackDTO addTrack() {
-        TracksDTO tracks = heavymetaltracks;
+    public TrackDTO addTrack(String token, TrackDTO trackDTO) {
 
-        var track2 = new TrackDTO();
-        track2.setId(4);
-        track2.setTitle("So Long, Marianne");
-        track2.setPerformer("Leonard Cohen");
-        track2.setDuration(546);
-        track2.setAlbum("Songs of Leonard Cohen");
-        track2.setPlaycount(0);
-        track2.setPublicationDate(null);
-        track2.setDescription(null);
-        track2.setOfflineAvailable(false);
+//        try {
+//            var idStatement = connection.prepareStatement
+//                    ("SELECT MAX(id) id FROM track");
+//            ResultSet resultSet = idStatement.executeQuery();
+//            resultSet.next();
+//            int id = resultSet.getInt("id");
+//
+//            var addStatement = connection.prepareStatement
+//                    ("INSERT INTO playlist (id, name, owner) VALUES (?, ?, ?)");
+//            addStatement.setInt(1, id + 1);
+//            addStatement.setString(2, playlistDTO.getName());
+//            addStatement.setBoolean(3, true);
+//            addStatement.execute();
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        return getPlaylistsDTO(token);
+        return trackDTO;
 
-        java.util.List<TrackDTO> trackArray = List.of(playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(0),
-                playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(1), track2);
-        tracks.setTracks(trackArray);
-        playlistsDTO.getPlaylists().get(0).setTracks(tracks);
+//        TracksDTO tracksDTO = this.tracks(token, idPlaylist);
+//        var tracks = tracksDTO.getTracks();
+//        TrackDTO track = tracks.stream().filter(element -> element.equals(idTrack)).findFirst().get();
+//
+//        try {
+//            var select = connection.prepareStatement
+//                    ("DELETE track WHERE id = ?");
+//            select.setInt(1, track.getId());
+//            select.execute();
+//
+//            tracksDTO = this.tracks(token, idPlaylist);
+//
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        return tracksDTO;
 
-        return track2;
+//        var track2 = new TrackDTO();
+//        track2.setId(4);
+//        track2.setTitle("So Long, Marianne");
+//        track2.setPerformer("Leonard Cohen");
+//        track2.setDuration(546);
+//        track2.setAlbum("Songs of Leonard Cohen");
+//        track2.setPlaycount(0);
+//        track2.setPublicationDate(null);
+//        track2.setDescription(null);
+//        track2.setOfflineAvailable(false);
+//
+//        java.util.List<TrackDTO> trackArray = List.of(playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(0),
+//                playlistsDTO.getPlaylists().get(0).getTracks().getTracks().get(1), track2);
+//        tracks.setTracks(trackArray);
+//        playlistsDTO.getPlaylists().get(0).setTracks(tracks);
+//
+//        return track2;
     }
 }
