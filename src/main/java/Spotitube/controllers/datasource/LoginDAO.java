@@ -1,10 +1,13 @@
-package Spotitube.controllers.database;
+package Spotitube.controllers.datasource;
 
+import Spotitube.controllers.datasource.exceptions.IncorrectLoginException;
+import Spotitube.controllers.datasource.exceptions.IncorrectTokenException;
 import Spotitube.controllers.dto.LoginRequestDTO;
 import Spotitube.controllers.dto.LoginResponseDTO;
 import Spotitube.controllers.services.LoginService;
 
 import javax.inject.Inject;
+import javax.ws.rs.ServerErrorException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,28 +52,29 @@ public class LoginDAO {
                 loginResponseDTO.setToken(token);
                 return loginResponseDTO;
             }
-            return null;
-
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new ServerErrorException(500);
         }
-        return null;
-        //welke status anders?
+        throw new IncorrectLoginException();
     }
-    
-//    public String getLoginToken(){
-//        return logintoken;
-//////        String token = null;
-//////        try {
-//////            var select = connection.prepareStatement
-//////                    ("SELECT token FROM login WHERE username = ? ");
-//////            select.setString(1, username);
-//////            ResultSet resultSet = select.executeQuery();
-//////
-//////            token = resultSet.getString("token");
-//////        } catch (SQLException throwables) {
-//////            throwables.printStackTrace();
-//////        }
-//////        return token;
-//    }
+
+    public LoginResponseDTO getUserFromToken(String token, Connection connection) {
+        var loginResponseDTO = new LoginResponseDTO();
+        try {
+            var select = connection.prepareStatement
+                    ("SELECT username FROM login WHERE token = ? ");
+            select.setString(1, token);
+            var resultSet = select.executeQuery();
+
+            if(!resultSet.next()){
+                throw new IncorrectTokenException();
+            }
+
+            var username = resultSet.getString("username");
+            loginResponseDTO.setUser(username);
+        } catch (SQLException throwables) {
+            throw new ServerErrorException(500);
+        }
+        return loginResponseDTO;
+    }
 }

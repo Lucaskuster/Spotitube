@@ -1,6 +1,6 @@
 package Spotitube.controllers.controllers;
 
-import Spotitube.controllers.database.LoginDAO;
+import Spotitube.controllers.datasource.LoginDAO;
 import Spotitube.controllers.dto.LoginRequestDTO;
 
 import javax.inject.Inject;
@@ -24,8 +24,6 @@ public class LoginController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(LoginRequestDTO loginRequestDTO){
-        var result = loginDAO.loginDAO(loginRequestDTO);
-        // Hoe vang ik een andere status code af?
-        return Response.ok(result).build();
+        return Response.ok(loginDAO.loginDAO(loginRequestDTO)).build();
     }
 }

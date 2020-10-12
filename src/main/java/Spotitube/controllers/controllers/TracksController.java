@@ -1,6 +1,6 @@
 package Spotitube.controllers.controllers;
 
-import Spotitube.controllers.database.TracksDAO;
+import Spotitube.controllers.datasource.TracksDAO;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -14,17 +14,14 @@ import javax.ws.rs.core.Response;
 public class TracksController {
     private TracksDAO tracksDAO;
 
-    @Inject
-    public void setPlaylistsDAO(TracksDAO tracksDAO) {
-        this.tracksDAO = tracksDAO;
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response tracks(@QueryParam("forPlaylist") int playlistId, @QueryParam("token") String token){
-//        if (token.equals(loginResponseDTO.getToken())){
-            return Response.ok(tracksDAO.getTracksDTO(token)).build();
-//        }
-//        return Response.status(403).build();
+            return Response.ok(tracksDAO.getTracksDTO(token, playlistId)).build();
+    }
+
+    @Inject
+    public void setPlaylistsDAO(TracksDAO tracksDAO) {
+        this.tracksDAO = tracksDAO;
     }
 }

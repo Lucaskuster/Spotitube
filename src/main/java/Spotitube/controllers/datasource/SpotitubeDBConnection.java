@@ -1,12 +1,10 @@
-package Spotitube.controllers.database;
+package Spotitube.controllers.datasource;
 
 import javax.inject.Singleton;
 import java.sql.*;
 
 @Singleton
 public class SpotitubeDBConnection {
-
-    private String connectionUrl = "jdbc:sqlserver://localhost;database=Spotitube;integratedSecurity=true;";
 
     public SpotitubeDBConnection() {
     }
@@ -20,6 +18,7 @@ public class SpotitubeDBConnection {
             e.printStackTrace();
         }
         try {
+            String connectionUrl = "jdbc:sqlserver://localhost;database=Spotitube;integratedSecurity=true;";
             cnEmps = DriverManager.getConnection(connectionUrl);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
