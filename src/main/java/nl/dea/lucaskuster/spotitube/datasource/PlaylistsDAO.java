@@ -2,6 +2,7 @@ package nl.dea.lucaskuster.spotitube.datasource;
 
 import nl.dea.lucaskuster.spotitube.datasource.exceptions.WrongPlaylistIdException;
 import nl.dea.lucaskuster.spotitube.datasource.exceptions.WrongTrackIdException;
+import nl.dea.lucaskuster.spotitube.datasource.resultsetMappers.PlaylistDTOMapper;
 import nl.dea.lucaskuster.spotitube.datasource.resultsetMappers.TrackDTOMapper;
 import nl.dea.lucaskuster.spotitube.dto.PlaylistDTO;
 import nl.dea.lucaskuster.spotitube.dto.PlaylistsDTO;
@@ -21,6 +22,7 @@ public class PlaylistsDAO {
 
     private Connection connection;
     private TrackDTOMapper trackDTOMapper;
+    private PlaylistDTOMapper playlistDTOMapper;
     private LoginDAO loginDAO;
     private PlaylistService playlistService;
 
@@ -37,28 +39,20 @@ public class PlaylistsDAO {
 
             var resultSet = select.executeQuery();
 
-            var lengthBereken = 0;
+            var length = 0;
 
             var i = 0;
             List<PlaylistDTO> playlistArray = new ArrayList<>();
             while (resultSet.next()) {
-                var playlistDTO = new PlaylistDTO();
-                var tracksDTO = tracksInPlaylist(token, resultSet.getInt("id"));
-                playlistDTO.setId(resultSet.getInt("id"));
-                playlistDTO.setName(resultSet.getString("name"));
-                playlistDTO.setOwner(playlistService.checkOwner(user.getUser(), resultSet.getString("owner")));
-                playlistDTO.setTracks(tracksDTO);
-
+                var playlistDTO = playlistDTOMapper.maptoPlaylistDTO(resultSet, tracksInPlaylist(token, resultSet.getInt("id")), playlistService, user);
                 playlistArray.add(i, playlistDTO);
 
-                var tracks = tracksDTO.getTracks();
-                for (TrackDTO track : tracks) { //TODO eruit halen en methode length bereken en die testen
-                    lengthBereken += track.getDuration();
-                }
+                length += playlistService.lengthPlaylist(playlistDTO);
+                playlistArray.add(i, playlistDTO);
                 i++;
             }
             playlistsDTO.setPlaylists(playlistArray);
-            playlistsDTO.setLength(lengthBereken);
+            playlistsDTO.setLength(length);
 
         } catch (SQLException throwables) {
             throw new ServerErrorException(500);
@@ -210,6 +204,11 @@ public class PlaylistsDAO {
     @Inject
     public void setTrackDTOMapper(TrackDTOMapper trackDTOMapper) {
         this.trackDTOMapper = trackDTOMapper;
+    }
+
+    @Inject
+    public void setPlaylistDTOMapper(PlaylistDTOMapper playlistDTOMapper) {
+        this.playlistDTOMapper = playlistDTOMapper;
     }
 
     @Inject

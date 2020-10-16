@@ -25,9 +25,4 @@ public class SpotitubeDBConnection {
         }
         return cnEmps;
     }
-
-    @Inject
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
 }
