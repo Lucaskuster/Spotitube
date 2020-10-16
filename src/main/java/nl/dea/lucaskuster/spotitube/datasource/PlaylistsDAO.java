@@ -46,9 +46,7 @@ public class PlaylistsDAO {
             while (resultSet.next()) {
                 var playlistDTO = playlistDTOMapper.maptoPlaylistDTO(resultSet, tracksInPlaylist(token, resultSet.getInt("id")), playlistService, user);
                 playlistArray.add(i, playlistDTO);
-
                 length += playlistService.lengthPlaylist(playlistDTO);
-                playlistArray.add(i, playlistDTO);
                 i++;
             }
             playlistsDTO.setPlaylists(playlistArray);

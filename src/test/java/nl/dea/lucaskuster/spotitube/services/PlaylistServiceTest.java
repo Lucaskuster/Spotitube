@@ -3,16 +3,12 @@ package nl.dea.lucaskuster.spotitube.services;
 import nl.dea.lucaskuster.spotitube.dto.PlaylistDTO;
 import nl.dea.lucaskuster.spotitube.dto.TrackDTO;
 import nl.dea.lucaskuster.spotitube.dto.TracksDTO;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.sound.midi.Track;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class PlaylistServiceTest {
 

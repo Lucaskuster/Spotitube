@@ -2,7 +2,6 @@ package nl.dea.lucaskuster.spotitube.datasource.resultsetMappers;
 
 import nl.dea.lucaskuster.spotitube.dto.LoginResponseDTO;
 import nl.dea.lucaskuster.spotitube.dto.PlaylistDTO;
-import nl.dea.lucaskuster.spotitube.dto.TrackDTO;
 import nl.dea.lucaskuster.spotitube.dto.TracksDTO;
 import nl.dea.lucaskuster.spotitube.services.PlaylistService;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,5 @@
 package nl.dea.lucaskuster.spotitube.datasource;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ServerErrorException;
 import java.sql.*;

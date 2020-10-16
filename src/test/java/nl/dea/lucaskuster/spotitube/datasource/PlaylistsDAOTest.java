@@ -35,7 +35,6 @@ public class PlaylistsDAOTest {
     }
 
     //================================================ getAllPlaylistsDTO ================================================
-    //TODO misschien hier meer testen
     @Test
     void getAllPlaylistsThrowsExceptionWhenConnectionThrowsException() throws SQLException {
         // Arrange
