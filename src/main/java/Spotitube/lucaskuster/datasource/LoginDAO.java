@@ -18,32 +18,16 @@ public class LoginDAO {
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         try {
-            var select = connection.prepareStatement
-                    ("SELECT username, password FROM login WHERE username = ? ");
-            select.setString(1, loginRequestDTO.getUser());
-
-            ResultSet resultSet = select.executeQuery();
-            String username = "";
-            String password = "";
-
-            while (resultSet.next()) {
-                username = resultSet.getString("username");
-                password = resultSet.getString("password");
-            }
-
-            var loginCorrect = loginRequestDTO.getPassword().equals(password);
-
-            if (loginCorrect) {
+            if (passwordControl(loginRequestDTO)) {
                 var token = loginService.createToken();
                 var insert = connection.prepareStatement
                         ("UPDATE LOGIN SET token = ? WHERE username = ?");
-
                 insert.setString(1, token);
-                insert.setString(2, username);
+                insert.setString(2, loginRequestDTO.getUser());
                 insert.execute();
 
                 var loginResponseDTO = new LoginResponseDTO();
-                loginResponseDTO.setUser(username);
+                loginResponseDTO.setUser(loginRequestDTO.getUser());
                 loginResponseDTO.setToken(token);
                 return loginResponseDTO;
             }
@@ -51,6 +35,20 @@ public class LoginDAO {
             throw new ServerErrorException(500);
         }
         throw new IncorrectLoginException();
+    }
+
+    public boolean passwordControl(LoginRequestDTO loginRequestDTO) {
+        try {
+            var select = connection.prepareStatement
+                    ("SELECT password FROM login WHERE username = ? ");
+            select.setString(1, loginRequestDTO.getUser());
+            ResultSet resultSet = select.executeQuery();
+            resultSet.next();
+
+            return loginRequestDTO.getPassword().equals(resultSet.getString("password"));
+        } catch (SQLException throwables) {
+            throw new ServerErrorException(500);
+        }
     }
 
     public LoginResponseDTO getUserFromToken(String token, Connection connection) {
@@ -61,7 +59,7 @@ public class LoginDAO {
             select.setString(1, token);
             var resultSet = select.executeQuery();
 
-            if(!resultSet.next()){
+            if (!resultSet.next()) {
                 throw new IncorrectTokenException();
             }
 
@@ -78,3 +76,12 @@ public class LoginDAO {
         this.connection = connection.createConnection();
     }
 }
+
+
+
+
+
+
+
+
+

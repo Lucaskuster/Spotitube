@@ -2,7 +2,7 @@ package Spotitube.lucaskuster.datasource;
 
 import Spotitube.lucaskuster.datasource.exceptions.WrongPlaylistIdException;
 import Spotitube.lucaskuster.datasource.exceptions.WrongTrackIdException;
-import Spotitube.lucaskuster.datasource.resultsetmappers.TrackDTOMapper;
+import Spotitube.lucaskuster.datasource.resultsetMappers.TrackDTOMapper;
 import Spotitube.lucaskuster.dto.PlaylistDTO;
 import Spotitube.lucaskuster.dto.PlaylistsDTO;
 import Spotitube.lucaskuster.dto.TrackDTO;
@@ -92,17 +92,10 @@ public class PlaylistsDAO {
     public PlaylistsDTO add(String token, PlaylistDTO playlistDTO) {
         var user = loginDAO.getUserFromToken(token, connection);
         try {
-            var idStatement = connection.prepareStatement
-                    ("SELECT MAX(id) id FROM playlist");
-            ResultSet resultSet = idStatement.executeQuery();
-            resultSet.next();
-            var id = resultSet.getInt("id");
-
             var addStatement = connection.prepareStatement
-                    ("INSERT INTO playlist (id, name, owner) VALUES (?, ?, ?)");
-            addStatement.setInt(1, id + 1);
-            addStatement.setString(2, playlistDTO.getName());
-            addStatement.setString(3, user.getUser());
+                    ("INSERT INTO playlist (name, owner) VALUES (?, ?)");
+            addStatement.setString(1, playlistDTO.getName());
+            addStatement.setString(2, user.getUser());
             addStatement.execute();
         } catch (SQLException throwables) {
             throw new ServerErrorException(500);
@@ -140,14 +133,10 @@ public class PlaylistsDAO {
         try {
 
             var select = connection.prepareStatement
-                    ("SELECT T.* FROM track T INNER JOIN playlistTracks P ON T.id = P.idTrack WHERE P.idPlaylist = ?");
+                    ("SELECT T.id, T.titel, T.performer, T.duration, T.album, T.playcount, T.publicationDate, T.description, " +
+                            " P.offlineAvailable FROM track T INNER JOIN playlistTracks P ON T.id = P.idTrack WHERE P.idPlaylist = ?");
             select.setInt(1, idPlaylist);
-
             var resultSet = select.executeQuery();
-
-            if(!resultSet.next()){
-                throw new WrongPlaylistIdException();
-            }
 
             var i = 0;
             List<TrackDTO> trackArray = new ArrayList<>();
@@ -203,9 +192,10 @@ public class PlaylistsDAO {
         loginDAO.getUserFromToken(token, connection);
         try {
             var addStatement = connection.prepareStatement
-                    ("INSERT INTO playlistTracks (idPlaylist, idTrack) VALUES (?, ?)");
+                    ("INSERT INTO playlistTracks (idPlaylist, idTrack, offlineAvailable) VALUES (?, ?, ?)");
             addStatement.setInt(1, idPlaylist);
             addStatement.setInt(2, trackDTO.getId());
+            addStatement.setBoolean(3, trackDTO.isOfflineAvailable());
             addStatement.execute();
 
         } catch (SQLException throwables) {

@@ -1,4 +1,4 @@
-package Spotitube.lucaskuster.datasource.resultsetmappers;
+package Spotitube.lucaskuster.datasource.resultsetMappers;
 
 import Spotitube.lucaskuster.dto.TrackDTO;
 

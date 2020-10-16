@@ -1,7 +1,6 @@
 package Spotitube.lucaskuster.datasource;
 
-import Spotitube.lucaskuster.datasource.exceptions.WrongPlaylistIdException;
-import Spotitube.lucaskuster.datasource.resultsetmappers.TrackDTOMapper;
+import Spotitube.lucaskuster.datasource.resultsetMappers.TrackDTOMapper;
 import Spotitube.lucaskuster.dto.TrackDTO;
 import Spotitube.lucaskuster.dto.TracksDTO;
 
@@ -30,20 +29,16 @@ public class TracksDAO {
             select.setInt(1, playlistId);
             var resultSet = select.executeQuery();
 
-            if(!resultSet.next()){
-                throw new WrongPlaylistIdException();
-            }
-
             int i = 0;
             List<TrackDTO> trackArray = new ArrayList<>();
+            var trackDTO = new TrackDTO();
 
             while (resultSet.next()) {
-                var trackDTO = trackDTOMapper.maptoTrackDTO(resultSet);
+                trackDTO = trackDTOMapper.maptoTrackDTO(resultSet);
                 trackArray.add(i, trackDTO);
                 i++;
             }
             tracksDTO.setTracks(trackArray);
-
         } catch (SQLException throwables) {
             throw new ServerErrorException(500);
         }
