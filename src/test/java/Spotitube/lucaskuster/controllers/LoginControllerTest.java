@@ -46,7 +46,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void loginDataTest(){
+    void loginDataTest() {
         //arrange
         var loginRequestDTO = new LoginRequestDTO();
         loginRequestDTO.setUser("Lucas");
@@ -83,7 +83,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void loginCorrectTokenTest(){
+    void loginCorrectTokenTest() {
         //arrange
         var loginRequestDTO = new LoginRequestDTO();
         loginRequestDTO.setUser("Lucas");

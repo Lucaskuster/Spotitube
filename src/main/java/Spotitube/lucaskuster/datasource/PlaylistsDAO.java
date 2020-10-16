@@ -74,7 +74,7 @@ public class PlaylistsDAO {
             checkPlaylist.setInt(1, id);
             ResultSet resultSet = checkPlaylist.executeQuery();
 
-            if(!resultSet.next()){
+            if (!resultSet.next()) {
                 throw new WrongPlaylistIdException();
             }
 
@@ -111,7 +111,7 @@ public class PlaylistsDAO {
             checkPlaylist.setInt(1, id);
             ResultSet resultSet = checkPlaylist.executeQuery();
 
-            if(!resultSet.next()){
+            if (!resultSet.next()) {
                 throw new WrongPlaylistIdException();
             }
 
@@ -131,7 +131,6 @@ public class PlaylistsDAO {
         loginDAO.getUserFromToken(token, connection);
         var tracksDTO = new TracksDTO();
         try {
-
             var select = connection.prepareStatement
                     ("SELECT T.id, T.titel, T.performer, T.duration, T.album, T.playcount, T.publicationDate, T.description, " +
                             " P.offlineAvailable FROM track T INNER JOIN playlistTracks P ON T.id = P.idTrack WHERE P.idPlaylist = ?");
@@ -155,7 +154,6 @@ public class PlaylistsDAO {
         return tracksDTO;
     }
 
-
     public TracksDTO deleteTrack(String token, int idPlaylist, int idTrack) {
         loginDAO.getUserFromToken(token, connection);
         try {
@@ -164,7 +162,7 @@ public class PlaylistsDAO {
             checkPlaylist.setInt(1, idPlaylist);
             ResultSet resultSetPlaylist = checkPlaylist.executeQuery();
 
-            if(!resultSetPlaylist.next()){
+            if (!resultSetPlaylist.next()) {
                 throw new WrongPlaylistIdException();
             }
 
@@ -173,7 +171,7 @@ public class PlaylistsDAO {
             checkTrack.setInt(1, idPlaylist);
             ResultSet resultSetTrack = checkTrack.executeQuery();
 
-            if(!resultSetTrack.next()){
+            if (!resultSetTrack.next()) {
                 throw new WrongTrackIdException();
             }
 
